@@ -9,7 +9,7 @@
  
 #### 安裝
  * ```composer require tsaiyihua/laravel-pagecache```
- * ```php artisan vendor:publish --tag=config```
+ * ```php artisan vendor:publish --tag=pagecache```
  * 在 config/filesystems.php 裡的 disk 下加入
  
  ```php

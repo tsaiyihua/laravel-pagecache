@@ -9,7 +9,7 @@ class CacheServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../config/pagecache.php' => config_path('pagecache.php'),
-        ], 'config');
+        ], 'pagecache');
 
         /*-----------------------------------------------------------------------
         | Register Console Commands

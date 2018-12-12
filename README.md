@@ -10,7 +10,7 @@ If you had the low hit rate cache on your web page, this package will help you t
 
 #### Install
  * ```composer require tsaiyihua/laravel-pagecache```
- * ```php artisan vendor:publish --tag=config```
+ * ```php artisan vendor:publish --tag=pagecache```
  * Add disk to config/filesystems.php
  
  ```php
