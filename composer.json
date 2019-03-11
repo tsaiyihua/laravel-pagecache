@@ -18,7 +18,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Tsaiyihua\\Cache\\": "src/"
+      "TsaiYiHua\\Cache\\": "src/"
     }
   },
   "extra": {
