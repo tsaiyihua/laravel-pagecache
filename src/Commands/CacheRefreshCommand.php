@@ -12,11 +12,14 @@ class CacheRefreshCommand extends Command
     protected $description = 'Refresh the specified page cache';
 
     protected $cacheSrv;
+
+    protected $cloudStorage;
     
     public function __construct(CacheService $cacheSrv)
     {
         parent::__construct();
         $this->cacheSrv = $cacheSrv;
+        $this->cloudStorage = ['s3', 'gcs'];
     }
 
     public function handle()
@@ -34,8 +37,10 @@ class CacheRefreshCommand extends Command
             $this->cacheSrv->create();
             $cacheFile = config('filesystems.disks.pages.root')
                 .DIRECTORY_SEPARATOR.$this->cacheSrv->getCacheFile();
-            chown($cacheFile, $cacheFileOwner);
-            chgrp($cacheFile, $cacheFileGroup);
+            if (!in_array(config('filesystems.disks.pages.driver'), $this->cloudStorage)) {
+                chown($cacheFile, $cacheFileOwner);
+                chgrp($cacheFile, $cacheFileGroup);
+            }
         } else {
             if ( $create ) {
                 $this->cacheSrv->create();

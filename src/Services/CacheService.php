@@ -31,6 +31,8 @@ class CacheService
      */
     protected $client;
 
+    protected $contentType = 'html';
+
     public $statKey = 'pagecache:request';
 
     /**
@@ -180,7 +182,7 @@ class CacheService
         $targetPath = substr($cacheName, -3,1).DIRECTORY_SEPARATOR
             .substr($cacheName, -2,1).DIRECTORY_SEPARATOR
             .substr($cacheName,-1,1);
-        $targetFile = $targetPath.DIRECTORY_SEPARATOR.md5($url).".html";
+        $targetFile = $targetPath.DIRECTORY_SEPARATOR.md5($url).".".$this->contentType;
         $this->pageFile = $targetFile;
         return $this;
     }
@@ -320,6 +322,11 @@ class CacheService
             'hit rate'  => $hitRate."%",
             'refresh rate'  => $refreshRate."%"
         ];
+    }
+
+    public function setContentType($type)
+    {
+        $this->contentType = $type;
     }
     /**
      * @param $_SERVER['QUERY_STRING'] $queryString

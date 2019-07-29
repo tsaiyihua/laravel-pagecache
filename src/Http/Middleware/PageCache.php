@@ -38,6 +38,7 @@ class PageCache
         if ( config('pagecache.enable') === false || $noCache === true) {
             return $next($request);
         }
+        $this->cacheSrv->setContentType($contentType);
         $this->cacheSrv->requestCount();
         $pageInfo = $this->cacheSrv->setUrl($request)->read();
         $pageContent = $pageInfo['content'];
