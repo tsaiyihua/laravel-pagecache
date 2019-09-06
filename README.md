@@ -54,6 +54,13 @@ OK, It's done. Join it.
  * PAGE_CACHE_OWNER The page cache file owner
  * PAGE_CACHE_GROUP The page cache file group
  
+#### APP_ENV in .env
+  * While APP_ENV is "production", the request parameter "noCache" will be set as false to avoid slow the online version.
+  * Base on the above reason
+    * We suggest you have more than 2 servers, the APP_ENV on online version can be set as "production", and one of the servers can be set other word except "production" to generator the cache file.
+    * If you have only one server, the APP_ENV can not be production. 
+    * The cache generator server must edit /etc/hosts, and add the domain ip to 127.0.0.1
+
 #### Commands
  * ```php artisan pagecache:clear```  
    Clear all page cache, if there had the permission problem, just use sudo to execute.

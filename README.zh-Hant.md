@@ -52,7 +52,14 @@
  * PAGE_CACHE_DELAY 網頁執行時，幾秒後開始建立該頁暫存檔
  * PAGE_CACHE_OWNER 暫存檔的系統擁有者
  * PAGE_CACHE_GROUP 暫存檔的系統群組
- 
+
+#### APP_ENV 設定
+ * 當 APP_ENV 為 production 時，URL的 noCache 參數會被強制設為 false，以避免被直接在線上發出需求而拖慢網頁速度
+ * 由於上述原因
+   * 建議兩台以上的伺服器來做服務，線上運行版本可將 APP_ENV 設為 production，而指定其中一台不對外服務，APP_ENV 可設為 production 以外的任何字串，專門來產生暫存檔。
+   * 如果只有一台，則線上版本不能將 APP_ENV 設為 production
+   * 專問產生暫存檔的伺服器，則在 /etc/hosts 內，將網域 IP 設為 127.0.0.1
+
 #### 可使用指令
  * ```php artisan pagecache:clear```  
     清除所有 page cache, 如果有檔案權限問題， 則用 sudo 來執行。
