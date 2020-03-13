@@ -7,6 +7,14 @@
  * 當訪問的網頁有快取內容時，直接讀取快取內容顯示。
  * 當訪問的網頁有快取內容，但其檔案產生時間走過設定的到期時間時，一樣先直接讀取快取內容顯示，再把產生實體網頁檔的執行程序丟到佇列去執行。
  
+#### Laravel 支援
+
+| Version  | Laravel Version  |
+|:---|:---|
+| 1.0.x  | 5.6, 5.7, 5.8   |
+| 1.1.x  | 6.x  |
+| 2.x    | 7.x |
+ 
 #### 安裝
  * ```composer require tsaiyihua/laravel-pagecache```
  * ```php artisan vendor:publish --tag=pagecache```
@@ -23,9 +31,11 @@
  ```php
     'pageCache' => \TsaiYiHua\Cache\Http\Middleware\PageCache::class
  ```
- * 建立暫存資料夾
+ 
+ * 建立暫存資料夾，這裡假設您使用laravel預設的storage
  
  ```bash
+   cd {your PAGE_CACHE_DISK}
    mkdir storage/app/pages
    chmod 777 storage/app/pages
  ```
@@ -39,7 +49,6 @@
     PAGE_CACHE_ALIVE=1296000
     PAGE_CACHE_URL_PATTERN=/^(http.*)\/\/([^\/]+)[\/]?([^\?]+)?\??(.*)?/
     PAGE_CACHE_PARAMS=l,p
-    PAGE_CACHE_DISK=/cache/pages
     PAGE_CACHE_DELAY=30
     PAGE_CACHE_OWNER=nobody
     PAGE_CACHE_GROUP=nobody    
@@ -48,17 +57,17 @@
  * PAGE_CACHE_ALIVE 為 Cache 時間(秒數)，預設為15天
  * PAGE_CACHE_URL_PATTERN 為 URL 的格式設定（不要去自己設定比較好）
  * PAGE_CACHE_PARAMS 可被 Cache 的參數設定， 以逗號隔開。
- * PAGE_CACHE_DISK 暫存檔存放的資料夾，預設為 storage/app/pages。
+ * PAGE_CACHE_DISK 暫存檔存放的資料夾，預設為 storage/app/pages。用預設值時，不用此變數。
  * PAGE_CACHE_DELAY 網頁執行時，幾秒後開始建立該頁暫存檔
- * PAGE_CACHE_OWNER 暫存檔的系統擁有者
- * PAGE_CACHE_GROUP 暫存檔的系統群組
+ * PAGE_CACHE_OWNER 暫存檔的系統擁有者。管理暫存檔時才會用到。
+ * PAGE_CACHE_GROUP 暫存檔的系統群組。管理暫存檔時才會用到。
 
 #### APP_ENV 設定
  * 當 APP_ENV 為 production 時，URL的 noCache 參數會被強制設為 false，以避免被直接在線上發出需求而拖慢網頁速度
  * 由於上述原因
    * 建議兩台以上的伺服器來做服務，線上運行版本可將 APP_ENV 設為 production，而指定其中一台不對外服務，APP_ENV 可設為 production 以外的任何字串，專門來產生暫存檔。
    * 如果只有一台，則線上版本不能將 APP_ENV 設為 production
-   * 專問產生暫存檔的伺服器，則在 /etc/hosts 內，將網域 IP 設為 127.0.0.1
+   * 專門產生暫存檔的伺服器，則在 /etc/hosts 內，將網域 IP 設為 127.0.0.1
 
 #### 可使用指令
  * ```php artisan pagecache:clear```  
