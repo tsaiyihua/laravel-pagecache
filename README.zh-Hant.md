@@ -35,7 +35,7 @@
  * 建立暫存資料夾，這裡假設您使用laravel預設的storage
  
  ```bash
-   cd {your PAGE_CACHE_DISK}
+   cd {YOUR PROJECT FOLDER}
    mkdir storage/app/pages
    chmod 777 storage/app/pages
  ```

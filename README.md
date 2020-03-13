@@ -36,7 +36,7 @@ If you had the low hit rate cache on your web page, this package will help you t
  * Create temporary folder, suppose that you use the default setting in Laravel
  
  ```bash
-   cd {your PAGE_CACHE_DISK}
+   cd {YOUR PROJECT FOLDER}
    mkdir storage/app/pages
    chmod 777 storage/app/pages
  ```
