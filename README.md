@@ -8,6 +8,14 @@ If you had the low hit rate cache on your web page, this package will help you t
  * When the accessed web page has cached content, the cached content display is directly read.
  * When the accessed webpage has cached content, but the file generation time exceeds the set expiration time, the cache content display is directly read first, and then the execution program that generates the physical webpage file is thrown into the queue for execution.
 
+#### Laravel Support
+
+| Version  | Laravel Version  |
+|:---|:---|
+| 1.0.x  | 5.6, 5.7, 5.8   |
+| 1.1.x  | 6.x  |
+| 2.x    | 7.x |
+
 #### Install
  * ```composer require tsaiyihua/laravel-pagecache```
  * ```php artisan vendor:publish --tag=pagecache```
@@ -24,9 +32,11 @@ If you had the low hit rate cache on your web page, this package will help you t
  ```php
     'pageCache' => \TsaiYiHua\Cache\Http\Middleware\PageCache::class
  ```
- * Create temporary folder
+ 
+ * Create temporary folder, suppose that you use the default setting in Laravel
  
  ```bash
+   cd {YOUR PROJECT FOLDER}
    mkdir storage/app/pages
    chmod 777 storage/app/pages
  ```
@@ -40,7 +50,6 @@ OK, It's done. Join it.
     PAGE_CACHE_ALIVE=1296000
     PAGE_CACHE_URL_PATTERN=/^(http.*)\/\/([^\/]+)[\/]?([^\?]+)?\??(.*)?/
     PAGE_CACHE_PARAMS=l,p
-    PAGE_CACHE_DISK=/cache/pages
     PAGE_CACHE_DELAY=30
     PAGE_CACHE_OWNER=nobody
     PAGE_CACHE_GROUP=nobody    
@@ -49,10 +58,12 @@ OK, It's done. Join it.
  * PAGE_CACHE_ALIVE timestamp, Page cache alive time, default is 15 days
  * PAGE_CACHE_URL_PATTERN regular expression, the default is common used, if you has the special rule, change this value.
  * PAGE_CACHE_PARAMS the query string who want to be cached, separate by ','
- * PAGE_CACHE_DISK The page cache file storage 
+ * PAGE_CACHE_DISK The page cache file storage, if you use the default setting, don't set this variable in .env 
  * PAGE_CACHE_DELAY seconds, Create cache file after the page visited
- * PAGE_CACHE_OWNER The page cache file owner
- * PAGE_CACHE_GROUP The page cache file group
+ * PAGE_CACHE_OWNER The page cache file owner. only used while manage the cache file 
+ * PAGE_CACHE_GROUP The page cache file group. only used while manage the cache file
+ 
+ If you use the Cloud Storage, just ignore the PAGE_CACHE_OWNER and PAGE_CACHE_GROUP
  
 #### APP_ENV in .env
   * While APP_ENV is "production", the request parameter "noCache" will be set as false to avoid slow the online version.
