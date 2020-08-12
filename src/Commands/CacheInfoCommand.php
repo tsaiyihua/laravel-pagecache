@@ -2,7 +2,7 @@
 namespace TsaiYiHua\Cache\Commands;
 
 use Illuminate\Console\Command;
-use TsaiYiHua\Cache\CacheService;
+use TsaiYiHua\Cache\Services\CacheService;
 
 class CacheInfoCommand extends Command
 {

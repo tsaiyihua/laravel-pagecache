@@ -1,5 +1,5 @@
 <?php
-namespace TsaiYiHua\Cache;
+namespace TsaiYiHua\Cache\Services;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
