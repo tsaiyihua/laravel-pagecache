@@ -2,7 +2,7 @@
 
 namespace TsaiYiHua\Cache\Http\Middleware;
 
-use TsaiYiHua\Cache\CacheService;
+use TsaiYiHua\Cache\Services\CacheService;
 use TsaiYiHua\Cache\Jobs\RenderPage;
 use Carbon\Carbon;
 use Closure;
