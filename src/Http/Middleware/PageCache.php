@@ -38,8 +38,11 @@ class PageCache
         if ( config('pagecache.enable') === false || $noCache === true) {
             return $next($request);
         }
+        /** set the content type for the cache file */
         $this->cacheSrv->setContentType($contentType);
+        /** record the request times */
         $this->cacheSrv->requestCount();
+        /** Get PageInfo */
         $pageInfo = $this->cacheSrv->setUrl($request)->read();
         $pageContent = $pageInfo['content'];
         $updateTime = $pageInfo['update'];
@@ -49,11 +52,13 @@ class PageCache
 
         $delaySeconds = config('pagecache.delay');
         if ( !empty($pageContent) ) {
+            /** record the hit times */
             $this->cacheSrv->hitCount();
             if ( $expired || $refresh ) {
+                /** record the refresh times */
                 $this->cacheSrv->refreshCount();
                 RenderPage::dispatch($this->cacheSrv, $request)
-                    ->delay(Carbon::now()->addSecond($delaySeconds));
+                    ->delay(Carbon::now()->addSeconds($delaySeconds));
             }
             if ( $contentType == 'json' ) {
                 return response()->json(json_decode($pageContent),200);
@@ -62,7 +67,7 @@ class PageCache
             }
         } else {
             RenderPage::dispatch($this->cacheSrv, $request)
-                ->delay(Carbon::now()->addSecond($delaySeconds));
+                ->delay(Carbon::now()->addSeconds($delaySeconds));
             return $next($request);
         }
     }

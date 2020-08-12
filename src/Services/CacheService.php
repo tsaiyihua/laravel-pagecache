@@ -1,11 +1,11 @@
 <?php
 namespace TsaiYiHua\Cache\Services;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redis as RedisManager;
 use Illuminate\Support\Facades\Storage;
 use TsaiYiHua\Cache\Exceptions\PageCacheException;
 
@@ -26,14 +26,10 @@ class CacheService
     protected $uri;
     protected $queryString;
 
-    /**
-     * @var Client
-     */
-    protected $client;
-
     protected $contentType = 'html';
 
     public $statKey = 'pagecache:request';
+
 
     /**
      * Create Page Cache
@@ -41,18 +37,15 @@ class CacheService
      */
     public function create()
     {
-        $this->client = new Client([
-            'base_uri'  => $this->site
-        ]);
+        $queryUrl = $this->site.$this->uri . "?nocache=1" . $this->queryString;
         try {
-            $queryUri = $this->uri . "?nocache=1" . $this->queryString;
-            $res = $this->client->get($queryUri);
-        } catch( ClientException $e ) {
+            $res = Http::get($queryUrl);
+        } catch (ConnectionException $e) {
+            /** Do not stop the queue work while connection error */
             return false;
         }
-        if ($res->getStatusCode() == '200') {
-            $content = $res->getBody()->getContents();
-            Storage::disk('pages')->put($this->pageFile, $content);
+        if ($res->status() == '200') {
+            Storage::disk('pages')->put($this->pageFile, $res->body());
         } else {
             return false;
         }
@@ -224,23 +217,18 @@ class CacheService
     public function requestCount()
     {
         $key = $this->statKey.':'.date('Ymd');
-        $hitCount = Redis::command('HGET', [$key, 'h']);
-        if ($hitCount == null) {
-            $hashData = [$key, 'ttl', 1, 'h', 0, 'r', 0];
-            try {
-                Redis::command('HMSET', $hashData);
-            } catch (\RedisException $e) {
-                return false;
-            }
-            return true;
+        $hitCount = RedisManager::hGet($key, 'h');
+        if ($hitCount === false) {
+            $hashData = [
+                'ttl'=>1,
+                'h'=>0,
+                'r'=>0
+            ];
+            RedisManager::hMset($key, $hashData);
         } else {
-            try {
-                Redis::command('HINCRBY', [$key, 'ttl', 1]);
-            } catch (\RedisException $e) {
-                return false;
-            }
-            return true;
+            RedisManager::hIncrby($key, 'ttl', 1);
         }
+        return true;
     }
 
     /**
@@ -250,21 +238,17 @@ class CacheService
     public function hitCount()
     {
         $key = $this->statKey.':'.date('Ymd');
-        $hitCount = Redis::command('HGET', [$key, 'h']);
+        $hitCount = RedisManager::hGet($key, 'h');
         if ($hitCount == null) {
-            $hashData = [$key, 'ttl', 1, 'h', 1, 'r', 0];
-            try {
-                Redis::command('HMSET', $hashData);
-            } catch (\RedisException $e) {
-                return false;
-            }
+            $hashData = [
+                'ttl'=>1,
+                'h'=>1,
+                'r'=>0
+            ];
+            RedisManager::hMset($key, $hashData);
             return true;
         } else {
-            try {
-                Redis::command('HINCRBY', [$key, 'h', 1]);
-            } catch (\RedisException $e) {
-                return false;
-            }
+            RedisManager::hIncrby($key, 'h', 1);
             return true;
         }
     }
@@ -276,21 +260,17 @@ class CacheService
     public function refreshCount()
     {
         $key = $this->statKey.':'.date('Ymd');
-        $hitCount = Redis::command('HGET', [$key, 'h']);
+        $hitCount = RedisManager::hGet($key, 'h');
         if ($hitCount == null) {
-            $hashData = [$key, 'ttl', 1, 'h', 1, 'r', 1];
-            try {
-                Redis::command('HMSET', $hashData);
-            } catch (\RedisException $e) {
-                return false;
-            }
+            $hashData = [
+                'ttl'=>1,
+                'h'=>1,
+                'r'=>1
+            ];
+            RedisManager::hMset($key, $hashData);
             return true;
         } else {
-            try {
-                Redis::command('HINCRBY', [$key, 'r', 1]);
-            } catch (\RedisException $e) {
-                return false;
-            }
+            RedisManager::hIncrby($key, 'r', 1);
             return true;
         }
     }
@@ -302,9 +282,9 @@ class CacheService
     public function getStatInfo($date)
     {
         $key = $this->statKey.':'.$date;
-        $ttlCount = Redis::command('HGET', [$key, 'ttl']);
-        $hitCount = Redis::command('HGET', [$key, 'h']);
-        $refreshCount = Redis::command('HGET', [$key, 'r']);
+        $ttlCount = RedisManager::hGet($key, 'ttl');
+        $hitCount = RedisManager::hGet($key, 'h');
+        $refreshCount = RedisManager::hGet($key, 'r');
         $hitRate = 0;
         $refreshRate = 0;
         if ( !empty($ttlCount) ) {
