@@ -3,7 +3,7 @@
 namespace TsaiYiHua\Cache\Jobs;
 
 use Illuminate\Http\Request;
-use TsaiYiHua\Cache\CacheService;
+use TsaiYiHua\Cache\Services\CacheService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;

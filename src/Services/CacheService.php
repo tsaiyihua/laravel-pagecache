@@ -1,5 +1,5 @@
 <?php
-namespace TsaiYiHua\Cache;
+namespace TsaiYiHua\Cache\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
