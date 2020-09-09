@@ -14,7 +14,7 @@ If you had the low hit rate cache on your web page, this package will help you t
 |:---|:---|
 | 1.0.x  | 5.6, 5.7, 5.8   |
 | 1.1.x  | 6.x  |
-| 2.x    | 7.x |
+| 2.x    | 7.x, 8.x |
 
 #### Install
  * ```composer require tsaiyihua/laravel-pagecache```
