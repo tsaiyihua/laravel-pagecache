@@ -39,7 +39,7 @@ class CacheService
     {
         $queryUrl = $this->site.$this->uri . "?nocache=1" . $this->queryString;
         try {
-            $res = Http::get($queryUrl);
+            $res = Http::withoutVerifying()->get($queryUrl);
         } catch (ConnectionException $e) {
             /** Do not stop the queue work while connection error */
             return false;

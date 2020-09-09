@@ -5,8 +5,9 @@
   "license": "MIT",
   "keywords": ["laravel", "cache", "page", "pagecache"],
   "require": {
-    "laravel/framework": "^7.0",
-    "ext-redis": "*"
+    "laravel/framework": "^7|^8",
+    "ext-redis": "*",
+    "ext-json": "*"
   },
   "authors": [
     {
