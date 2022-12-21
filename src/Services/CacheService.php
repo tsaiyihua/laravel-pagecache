@@ -1,12 +1,12 @@
 <?php
 namespace TsaiYiHua\Cache\Services;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis as RedisManager;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToRetrieveMetadata;
 use TsaiYiHua\Cache\Exceptions\PageCacheException;
 
 /**
@@ -63,7 +63,7 @@ class CacheService
         try {
             $pageContent = Storage::disk('pages')->get($this->pageFile);
             $updateTime = Storage::disk('pages')->lastModified($this->pageFile);
-        } catch(FileNotFoundException $e){
+        } catch(UnableToRetrieveMetadata $e){
             $pageContent = '';
             $updateTime = 0;
         }
