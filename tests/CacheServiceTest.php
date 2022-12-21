@@ -1,7 +1,6 @@
 <?php
 namespace TsaiYiHua\Cache\Tests;
 
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use TsaiYiHua\Cache\Exceptions\PageCacheException;
 use TsaiYiHua\Cache\Services\CacheService;

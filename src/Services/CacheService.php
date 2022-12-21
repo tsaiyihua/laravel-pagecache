@@ -1,6 +1,7 @@
 <?php
 namespace TsaiYiHua\Cache\Services;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -64,6 +65,9 @@ class CacheService
             $pageContent = Storage::disk('pages')->get($this->pageFile);
             $updateTime = Storage::disk('pages')->lastModified($this->pageFile);
         } catch(UnableToRetrieveMetadata $e){
+            $pageContent = '';
+            $updateTime = 0;
+        } catch (FileNotFoundException $e) {
             $pageContent = '';
             $updateTime = 0;
         }
