@@ -7,14 +7,14 @@ use TsaiYiHua\Cache\Exceptions\PageCacheException;
 
 class CacheRefreshCommand extends Command
 {
-    protected $signature = 'pagecache:refresh {url} 
+    protected $signature = 'pagecache:refresh {url}
                             {--create : if not found, create it}';
     protected $description = 'Refresh the specified page cache';
 
     protected $cacheSrv;
 
     protected $cloudStorage;
-    
+
     public function __construct(CacheService $cacheSrv)
     {
         parent::__construct();
@@ -27,7 +27,7 @@ class CacheRefreshCommand extends Command
         $url = $this->argument('url');
         if ( empty($url) ) {
             print "url can not leave be blank\n";
-            die();
+            return 1;
         }
         $create = $this->option('create');
         $cacheFileOwner = config('pagecache.owner');
@@ -52,5 +52,6 @@ class CacheRefreshCommand extends Command
         if ( !$create ) {
             print "page cache has been updated\n";
         }
+        return 0;
     }
 }

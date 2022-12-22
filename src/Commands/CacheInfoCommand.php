@@ -23,7 +23,7 @@ class CacheInfoCommand extends Command
         $url = $this->argument('url');
         if ( empty($url) ) {
             print "url can not leave be blank\n";
-            die();
+            return 1;
         }
         if ( $url == 'stat' ) {
             $date = $this->option('date');
@@ -32,6 +32,7 @@ class CacheInfoCommand extends Command
             foreach($data as $key=>$val) {
                 print $key.': '.$val."\n";
             }
+            return 0;
         } else {
             $this->cacheSrv->parseUrl($url);
             $pageCacheInfo = $this->cacheSrv->read();
@@ -41,6 +42,7 @@ class CacheInfoCommand extends Command
             } else {
                 print 'No Cache' . "\n";
             }
+            return 0;
         }
     }
 }

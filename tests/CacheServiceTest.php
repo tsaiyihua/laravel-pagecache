@@ -36,6 +36,11 @@ test('set cache time', function() {
     $this->assertEquals(config('pagecache.alive'), $this->cacheService->setCacheTime()->getCacheTime());
 });
 
+test('set url pattern', function() {
+    $pattern = '/^(http.*)\/\/([^\/]+)[\/]?([^\?]+)?\??(.*)?/';
+    $this->assertEquals(config('pagecache.urlPattern'), $this->cacheService->setUrlPattern($pattern)->getUrlPattern());
+});
+
 test('set url', function () {
     $parameters = [
         'a' => 1,
@@ -44,10 +49,13 @@ test('set url', function () {
         'd' => 4
     ];
     $url = 'https://localhost/'.Str::random();
+    $httpUrl = 'http://localhost/'.Str::random();
     $request = $this->createRequest('get', Str::random(32), $url, [], $parameters);
+    $httpRequest = $this->createRequest('get', Str::random(32), $httpUrl, [], $parameters);
 
     /** No Parameter */
     $this->assertEquals($url, $this->cacheService->setUrl($request)->getUrl());
+    $this->assertEquals($httpUrl, $this->cacheService->setUrl($httpRequest)->getUrl());
 
     /** Has Parameters */
     Config::set('pagecache.params', 'b,d');
@@ -66,9 +74,19 @@ test('parse url fail', function () {
 
 test('create cache', function() {
     $url = 'https://tyh.idv.tw/bookmark';
+    $this->cacheService->setContentType('html');
     $this->assertTrue($this->cacheService->parseUrl($url)->create());
 });
 
+test('create cache fail with connection', function() {
+    $url = 'https://host.cannot.connect';
+    $this->assertFalse($this->cacheService->parseUrl($url)->create());
+});
+
+test('create cache fail with page not found', function() {
+    $url = 'https://tyh.idv.tw/aabbbcccddd';
+    $this->assertFalse($this->cacheService->parseUrl($url)->create());
+});
 test('read cache', function() {
     $url = 'https://tyh.idv.tw/bookmark';
     $request = $this->createRequest('get', '', $url);
@@ -87,4 +105,29 @@ test('delete cache', function() {
     $url = 'https://tyh.idv.tw/bookmark';
     $request = $this->createRequest('get', '', $url);
     $this->assertTrue($this->cacheService->setUrl($request)->delete());
+});
+
+test('request count', function() {
+    $this->assertTrue($this->cacheService->clearCountData());
+    $this->assertTrue($this->cacheService->requestCount());
+    $this->assertTrue($this->cacheService->requestCount());
+});
+
+test('hit count', function() {
+    $this->assertTrue($this->cacheService->clearCountData());
+    $this->assertTrue($this->cacheService->hitCount());
+    $this->assertTrue($this->cacheService->hitCount());
+});
+
+test('refresh count', function() {
+    $this->assertTrue($this->cacheService->clearCountData());
+    $this->assertTrue($this->cacheService->refreshCount());
+    $this->assertTrue($this->cacheService->refreshCount());
+});
+
+test('get stat info', function() {
+    $this->cacheService->requestCount();
+    $this->cacheService->hitCount();
+    $statInfo = $this->cacheService->getStatInfo(date('Ymd'));
+    $this->assertArrayHasKey('total', $statInfo);
 });

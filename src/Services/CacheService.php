@@ -1,7 +1,6 @@
 <?php
 namespace TsaiYiHua\Cache\Services;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -9,6 +8,7 @@ use Illuminate\Support\Facades\Redis as RedisManager;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToRetrieveMetadata;
 use TsaiYiHua\Cache\Exceptions\PageCacheException;
+use Exception;
 
 /**
  * Class CacheService
@@ -64,10 +64,7 @@ class CacheService
         try {
             $pageContent = Storage::disk('pages')->get($this->pageFile);
             $updateTime = Storage::disk('pages')->lastModified($this->pageFile);
-        } catch (FileNotFoundException $e) {
-            $pageContent = '';
-            $updateTime = 0;
-        } catch(UnableToRetrieveMetadata $e) {
+        } catch (Exception $e) {
             $pageContent = '';
             $updateTime = 0;
         }
@@ -117,9 +114,6 @@ class CacheService
         $qString = $this->getCacheQueryString($queryString);
         if ( $qString ) $url .= '?'.$qString;
 
-        if ( !preg_match($this->getUrlPattern(), $url) ) {
-            throw new PageCacheException('Url format error');
-        }
         $this->url = $url;
         return $this;
     }
@@ -279,6 +273,12 @@ class CacheService
         }
     }
 
+    public function clearCountData()
+    {
+        $key = $this->statKey.':'.date('Ymd');
+        RedisManager::del($key);
+        return true;
+    }
     /**
      * @param $date, date format is Ymd (YYYYMMDD)
      * @return array

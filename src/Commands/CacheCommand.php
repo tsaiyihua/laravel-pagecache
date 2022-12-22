@@ -20,5 +20,6 @@ class CacheCommand extends Command
             }
         }
         print "page cache has been cleared\n";
+        return 0;
     }
 }
