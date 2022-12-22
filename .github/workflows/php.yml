@@ -34,8 +34,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    - name: Install redis server
+      run: sudo apt-get install redis
     - name: Install dependencies
-      run: sudo apt-get install redis & composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
