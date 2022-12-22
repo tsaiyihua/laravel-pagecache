@@ -34,8 +34,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Who
-      run: whoami
     - name: Install redis server
       run: sudo apt-get install redis
     - name: Install dependencies
