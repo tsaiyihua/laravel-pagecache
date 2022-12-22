@@ -107,27 +107,27 @@ test('delete cache', function() {
     $this->assertTrue($this->cacheService->setUrl($request)->delete());
 });
 
-//test('request count', function() {
-//    $this->assertTrue($this->cacheService->clearCountData());
-//    $this->assertTrue($this->cacheService->requestCount());
-//    $this->assertTrue($this->cacheService->requestCount());
-//});
-//
-//test('hit count', function() {
-//    $this->assertTrue($this->cacheService->clearCountData());
-//    $this->assertTrue($this->cacheService->hitCount());
-//    $this->assertTrue($this->cacheService->hitCount());
-//});
-//
-//test('refresh count', function() {
-//    $this->assertTrue($this->cacheService->clearCountData());
-//    $this->assertTrue($this->cacheService->refreshCount());
-//    $this->assertTrue($this->cacheService->refreshCount());
-//});
-//
-//test('get stat info', function() {
-//    $this->cacheService->requestCount();
-//    $this->cacheService->hitCount();
-//    $statInfo = $this->cacheService->getStatInfo(date('Ymd'));
-//    $this->assertArrayHasKey('total', $statInfo);
-//});
+test('request count', function() {
+    $this->assertTrue($this->cacheService->clearCountData());
+    $this->assertTrue($this->cacheService->requestCount());
+    $this->assertTrue($this->cacheService->requestCount());
+});
+
+test('hit count', function() {
+    $this->assertTrue($this->cacheService->clearCountData());
+    $this->assertTrue($this->cacheService->hitCount());
+    $this->assertTrue($this->cacheService->hitCount());
+});
+
+test('refresh count', function() {
+    $this->assertTrue($this->cacheService->clearCountData());
+    $this->assertTrue($this->cacheService->refreshCount());
+    $this->assertTrue($this->cacheService->refreshCount());
+});
+
+test('get stat info', function() {
+    $this->cacheService->requestCount();
+    $this->cacheService->hitCount();
+    $statInfo = $this->cacheService->getStatInfo(date('Ymd'));
+    $this->assertArrayHasKey('total', $statInfo);
+});
