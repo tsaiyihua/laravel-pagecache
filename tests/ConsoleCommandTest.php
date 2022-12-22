@@ -9,24 +9,24 @@ test('artisan pagecache:clear', function() {
     $this->artisan('pagecache:clear')->assertSuccessful();
 });
 
-test('artisan pagecache:info', function() {
-    $cacheSrv = new CacheService();
-    $url = 'https://tyh.idv.tw/bookmark';
-    $this->artisan('pagecache:info '.$url)->assertSuccessful();
-    $this->artisan('pagecache:info ""')->assertExitCode(1);
-    $this->artisan('pagecache:info stat')->assertSuccessful(1);
-    $cacheSrv->parseUrl($url)->create();
-    $this->artisan('pagecache:info '.$url)->assertSuccessful();
-});
+//test('artisan pagecache:info', function() {
+//    $cacheSrv = new CacheService();
+//    $url = 'https://tyh.idv.tw/bookmark';
+//    $this->artisan('pagecache:info '.$url)->assertSuccessful();
+//    $this->artisan('pagecache:info ""')->assertExitCode(1);
+//    $this->artisan('pagecache:info stat')->assertSuccessful(1);
+//    $cacheSrv->parseUrl($url)->create();
+//    $this->artisan('pagecache:info '.$url)->assertSuccessful();
+//});
 
-test('artisan pagecache:refresh', function() {
-    $url = 'https://tyh.idv.tw/bookmark';
-    Config::set('pagecache.owner', 'tyh');
-    Config::set('pagecache.group', 'tyh');
-    $this->artisan('pagecache:refresh '.$url)->assertSuccessful();
-    $this->artisan('pagecache:refresh ""')->assertExitCode(1);
-    $this->artisan('pagecache:clear')->assertSuccessful();
-});
+//test('artisan pagecache:refresh', function() {
+//    $url = 'https://tyh.idv.tw/bookmark';
+//    Config::set('pagecache.owner', 'tyh');
+//    Config::set('pagecache.group', 'tyh');
+//    $this->artisan('pagecache:refresh '.$url)->assertSuccessful();
+//    $this->artisan('pagecache:refresh ""')->assertExitCode(1);
+//    $this->artisan('pagecache:clear')->assertSuccessful();
+//});
 
 test('artisan pagecache:refresh page not found', function() {
     $url = 'https://tyh.idv.tw/bookmark';
