@@ -64,10 +64,10 @@ class CacheService
         try {
             $pageContent = Storage::disk('pages')->get($this->pageFile);
             $updateTime = Storage::disk('pages')->lastModified($this->pageFile);
-        } catch(UnableToRetrieveMetadata $e){
+        } catch (FileNotFoundException $e) {
             $pageContent = '';
             $updateTime = 0;
-        } catch (FileNotFoundException $e) {
+        } catch(UnableToRetrieveMetadata $e) {
             $pageContent = '';
             $updateTime = 0;
         }
