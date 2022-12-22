@@ -30,14 +30,14 @@ test('artisan pagecache:refresh', function() {
 
 test('artisan pagecache:refresh page not found', function() {
     $url = 'https://tyh.idv.tw/bookmark';
-    Config::set('pagecache.owner', 'tyh');
-    Config::set('pagecache.group', 'tyh');
+    Config::set('pagecache.owner', 'root');
+    Config::set('pagecache.group', 'root');
     $this->artisan('pagecache:refresh '.$url);
 })->throws(PageCacheException::class);
 
 test('artisan pagecache:refresh page not found but create', function() {
     $url = 'https://tyh.idv.tw/bookmark';
-    Config::set('pagecache.owner', 'tyh');
-    Config::set('pagecache.group', 'tyh');
+    Config::set('pagecache.owner', 'root');
+    Config::set('pagecache.group', 'root');
     $this->artisan('pagecache:refresh '.$url.' --create')->assertSuccessful();
 });
