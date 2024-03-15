@@ -39,7 +39,7 @@ jobs:
     - name: Install redis server
       run: sudo apt-get install redis
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: composer install --prefer-dist --no-progress --ignore-lock
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
