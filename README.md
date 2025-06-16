@@ -10,11 +10,11 @@ If you had the low hit rate cache on your web page, this package will help you t
 
 #### Laravel Support
 
-| Version  | Laravel Version |
-|:---|:----------------|
-| 1.0.x  | 5.6, 5.7, 5.8   |
-| 1.1.x  | 6.x             |
-| 2.x    | 7.x, 8.x, 9.x   |
+| Version  | Laravel Version     |
+|:---|:--------------------|
+| 1.0.x  | 5.6, 5.7, 5.8       |
+| 1.1.x  | 6.x                 |
+| 2.x    | 7.x, 8.x, 9.x, 10.x |
 
 #### Install
  * ```composer require tsaiyihua/laravel-pagecache```

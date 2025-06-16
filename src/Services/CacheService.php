@@ -103,7 +103,7 @@ class CacheService
      */
     public function setUrl($request)
     {
-        if ( $request->getPort() == '443' ) {
+        if ( $request->isSecure() ) { // Use isSecure() for a more reliable HTTPS check
             $httpMode = "https://";
         } else {
             $httpMode = "http://";
