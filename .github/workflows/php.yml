@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     # 這裡啟動 Redis 容器
@@ -27,38 +28,34 @@ jobs:
 
     strategy:
       matrix:
-        # 修正：你的原腳本 8.0 少了一個單引號，已補上
-        php: ['8.0', '8.1', '8.2', '8.3']
+        php: [8.0','8.1','8.2', '8.3']
 
     name: PHP ${{ matrix.php }} tests
 
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      # 使用 shivammathur/setup-php 是目前 Laravel 社群的主流做法
-      # 它能幫你處理好 PHP 版本、套件擴充（如 redis, bcmath）
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, redis
-          coverage: none
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate --strict
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
 
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+    - name: find my groups
+      run: groups runner
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-      - name: Run test suite
-        # 如果有連動 Redis，確保 .env.testing 的 REDIS_HOST 是 127.0.0.1
-        run: composer run-script test
+    # - name: Run test suite
+    #   run: composer run-script test
+    - name: Run test suite
+      run: composer run-script test
