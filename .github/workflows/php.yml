@@ -27,35 +27,51 @@ jobs:
           --health-retries 5
 
     strategy:
+      fail-fast: false
       matrix:
-        php: [8.0','8.1','8.2', '8.3']
+        php: ['8.2', '8.3', '8.4', '8.5']
 
     name: PHP ${{ matrix.php }} tests
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: redis, json
+        tools: composer
+        coverage: none
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
-    - name: Cache Composer packages
+    - name: Get Composer cache directory
       id: composer-cache
-      uses: actions/cache@v3
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache Composer packages
+      uses: actions/cache@v4
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php-
+          ${{ runner.os }}-php-${{ matrix.php }}-
 
     - name: find my groups
       run: groups runner
+
+    # composer.lock 以 PHP 8.3 產生，PHP 8.3 以上直接使用 lock 安裝；
+    # 低於 8.3 的版本則解除 platform 設定，依該 PHP 版本重新解析相依套件
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      run: |
+        if php -r 'exit(version_compare(PHP_VERSION, "8.3.0", ">=") ? 0 : 1);'; then
+          composer install --prefer-dist --no-progress
+        else
+          composer config --unset platform.php
+          composer update --prefer-dist --no-progress
+        fi
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    # - name: Run test suite
-    #   run: composer run-script test
     - name: Run test suite
       run: composer run-script test
