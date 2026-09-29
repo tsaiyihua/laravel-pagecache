@@ -52,6 +52,8 @@
     PAGE_CACHE_DELAY=30
     PAGE_CACHE_OWNER=nobody
     PAGE_CACHE_GROUP=nobody    
+    PAGE_CACHE_LOG=false
+    PAGE_CACHE_LOG_DAYS=7
 ```
  * PAGE_CACHE_ENABLE 為 true 或 false ，當其為 true 才啟動 Page Cache 機制
  * PAGE_CACHE_ALIVE 為 Cache 時間(秒數)，預設為15天
@@ -61,6 +63,8 @@
  * PAGE_CACHE_DELAY 網頁執行時，幾秒後開始建立該頁暫存檔
  * PAGE_CACHE_OWNER 暫存檔的系統擁有者。管理暫存檔時才會用到。
  * PAGE_CACHE_GROUP 暫存檔的系統群組。管理暫存檔時才會用到。
+ * PAGE_CACHE_LOG 為 true 或 false，為 true 時，每次產生 Cache 都會將時間、URL、執行秒數及結果記錄於 storage/logs/pagecache-YYYY-MM-DD.log，每天產生一份新檔
+ * PAGE_CACHE_LOG_DAYS Log 檔保留天數，預設為 7 天
 
 #### APP_ENV 設定
  * 當 APP_ENV 為 production 時，URL的 noCache 參數會被強制設為 false，以避免被直接在線上發出需求而拖慢網頁速度

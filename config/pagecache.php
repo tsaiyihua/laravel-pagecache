@@ -6,5 +6,7 @@ return [
     'params'        => env('PAGE_CACHE_PARAMS', null),
     'delay'         => env('PAGE_CACHE_DELAY', 30),
     'owner'         => env('PAGE_CACHE_OWNER', 'nobody'),
-    'group'         => env('PAGE_CACHE_GROUP', 'nobody')
+    'group'         => env('PAGE_CACHE_GROUP', 'nobody'),
+    'log'           => env('PAGE_CACHE_LOG', false),
+    'logDays'       => env('PAGE_CACHE_LOG_DAYS', 7),
 ];

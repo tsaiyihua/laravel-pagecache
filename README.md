@@ -53,6 +53,8 @@ OK, It's done. Join it.
     PAGE_CACHE_DELAY=30
     PAGE_CACHE_OWNER=nobody
     PAGE_CACHE_GROUP=nobody    
+    PAGE_CACHE_LOG=false
+    PAGE_CACHE_LOG_DAYS=7
 ```
  * PAGE_CACHE_ENABLE boolean, page cache will work while this value is true
  * PAGE_CACHE_ALIVE timestamp, Page cache alive time, default is 15 days
@@ -62,6 +64,8 @@ OK, It's done. Join it.
  * PAGE_CACHE_DELAY seconds, Create cache file after the page visited
  * PAGE_CACHE_OWNER The page cache file owner. only used while manage the cache file 
  * PAGE_CACHE_GROUP The page cache file group. only used while manage the cache file
+ * PAGE_CACHE_LOG boolean, while true, every cache creation writes the time, URL, execution seconds and result to storage/logs/pagecache-YYYY-MM-DD.log (a new file each day)
+ * PAGE_CACHE_LOG_DAYS how many days of log files to keep, default is 7
  
  If you use the Cloud Storage, just ignore the PAGE_CACHE_OWNER and PAGE_CACHE_GROUP
  

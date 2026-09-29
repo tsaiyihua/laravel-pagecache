@@ -4,6 +4,7 @@ namespace TsaiYiHua\Cache\Services;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis as RedisManager;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToRetrieveMetadata;
@@ -38,19 +39,45 @@ class CacheService
      */
     public function create()
     {
+        $startTime = microtime(true);
         $queryUrl = $this->site.$this->uri . "?nocache=1" . $this->queryString;
         try {
             $res = Http::withoutVerifying()->get($queryUrl);
         } catch (ConnectionException $e) {
+            $this->writeLog($startTime, 'fail: connection error ('.$e->getMessage().')');
             /** Do not stop the queue work while connection error */
             return false;
         }
         if ($res->status() == '200') {
             Storage::disk('pages')->put($this->pageFile, $res->body());
         } else {
+            $this->writeLog($startTime, 'fail: http status '.$res->status());
             return false;
         }
+        $this->writeLog($startTime, 'success');
         return true;
+    }
+
+    /**
+     * Write the page cache creation log while pagecache.log is enabled
+     * @param float $startTime
+     * @param string $result
+     * @return void
+     */
+    protected function writeLog($startTime, $result)
+    {
+        if ( !filter_var(config('pagecache.log', false), FILTER_VALIDATE_BOOLEAN) ) return;
+        $seconds = round(microtime(true) - $startTime, 4);
+        try {
+            Log::channel('pagecache')->info(sprintf(
+                'url: %s | seconds: %s | result: %s',
+                $this->url,
+                $seconds,
+                $result
+            ));
+        } catch (Exception $e) {
+            /** Logging must not break the cache creation */
+        }
     }
 
     /**
