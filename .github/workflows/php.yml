@@ -62,8 +62,8 @@ jobs:
     - name: find my groups
       run: groups runner
 
-    # composer.lock 以 PHP 8.3 產生，PHP 8.3 以上直接使用 lock 安裝；
-    # 低於 8.3 的版本則解除 platform 設定，依該 PHP 版本重新解析相依套件
+    # composer.lock 以 PHP 8.3 產生（Laravel 13），PHP 8.3 以上直接使用 lock 安裝；
+    # PHP 8.2 則解除 platform 設定，依該 PHP 版本重新解析相依套件（Laravel 12）
     - name: Install dependencies
       run: |
         if php -r 'exit(version_compare(PHP_VERSION, "8.3.0", ">=") ? 0 : 1);'; then
