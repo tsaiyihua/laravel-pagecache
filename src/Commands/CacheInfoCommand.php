@@ -6,7 +6,7 @@ use TsaiYiHua\Cache\Services\CacheService;
 
 class CacheInfoCommand extends Command
 {
-    protected $signature = 'pagecache:info {url} {--date= : stat date}';
+    protected $signature = 'pagecache:info {url} {--date= : stat date} {--contentType= : content type}';
     protected $description = 'Get page cache info';
 
 
@@ -21,6 +21,8 @@ class CacheInfoCommand extends Command
     public function handle()
     {
         $url = $this->argument('url');
+        $contentType = $this->option('contentType') ?? 'json';
+        $this->cacheSrv->setContentType($contentType);
         if ( empty($url) ) {
             print "url can not leave be blank\n";
             return 1;
