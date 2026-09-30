@@ -399,6 +399,53 @@ test('getStatInfo handles null counts from redis', function() {
     ], $stats);
 });
 
+test('create cache writes log when log is enabled', function() {
+    /** @var TestCase $this */
+    Config::set('pagecache.log', true);
+    Http::fake(['*' => Http::response('Test content', 200)]);
+    $logger = \Mockery::mock();
+    $logger->shouldReceive('info')->once()->with(\Mockery::on(function ($message) {
+        return str_contains($message, 'url: https://example.com/log-page')
+            && str_contains($message, 'seconds: ')
+            && str_contains($message, 'result: success');
+    }));
+    \Illuminate\Support\Facades\Log::shouldReceive('channel')->with('pagecache')->once()->andReturn($logger);
+
+    $this->cacheService->parseUrl('https://example.com/log-page');
+    $this->assertTrue($this->cacheService->create());
+});
+
+test('create cache writes fail result to log', function() {
+    /** @var TestCase $this */
+    Config::set('pagecache.log', true);
+    Http::fake(['*' => Http::response('Not Found', 404)]);
+    $logger = \Mockery::mock();
+    $logger->shouldReceive('info')->once()->with(\Mockery::on(function ($message) {
+        return str_contains($message, 'result: fail: http status 404');
+    }));
+    \Illuminate\Support\Facades\Log::shouldReceive('channel')->with('pagecache')->once()->andReturn($logger);
+
+    $this->cacheService->parseUrl('https://example.com/log-notfound');
+    $this->assertFalse($this->cacheService->create());
+});
+
+test('create cache does not write log when log is disabled', function() {
+    /** @var TestCase $this */
+    Config::set('pagecache.log', false);
+    Http::fake(['*' => Http::response('Test content', 200)]);
+    \Illuminate\Support\Facades\Log::shouldReceive('channel')->never();
+
+    $this->cacheService->parseUrl('https://example.com/no-log');
+    $this->assertTrue($this->cacheService->create());
+});
+
+test('pagecache log channel is registered as daily with 7 days', function() {
+    $channel = config('logging.channels.pagecache');
+    expect($channel['driver'])->toBe('daily')
+        ->and($channel['path'])->toBe(storage_path('logs/pagecache.log'))
+        ->and($channel['days'])->toBe(7);
+});
+
 test('set content type', function() {
     /** @var TestCase $this */
     $this->cacheService->setContentType('json');
